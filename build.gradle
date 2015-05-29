@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+javadoc.options.encoding = 'UTF-8'
+compileJava.options.encoding = 'UTF-8'
+
+mainClassName = 'leew.CalculatorTool'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.+'
+}
+
+jar {
+    from {
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    manifest {
+        attributes 'Main-Class': 'leew.CalculatorTool'
+    }
+
+    exclude('META-INF/*.txt')
+}

@@ -4,7 +4,7 @@ apply plugin: 'application'
 javadoc.options.encoding = 'UTF-8'
 compileJava.options.encoding = 'UTF-8'
 
-mainClassName = 'leew.CalculatorTool'
+mainClassName = 'leew.CalculatorFrame'
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ jar {
     }
 
     manifest {
-        attributes 'Main-Class': 'leew.CalculatorTool'
+        attributes 'Main-Class': mainClassName
     }
 
     exclude('META-INF/*.txt')

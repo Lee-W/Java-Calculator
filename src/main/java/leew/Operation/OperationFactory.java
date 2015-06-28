@@ -37,7 +37,7 @@ public class OperationFactory {
             case "log":
                 oper = new OperationLog();
                 break;
-            case "exp":
+            case "^":
                 oper = new OperationExp();
                 break;
             default:

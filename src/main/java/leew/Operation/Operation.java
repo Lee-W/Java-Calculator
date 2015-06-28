@@ -7,16 +7,8 @@ public abstract class Operation {
     protected double firstNum;
     protected double secondNum;
 
-    public double getFirstNum() {
-        return firstNum;
-    }
-
     public void setFirstNum(double firstNum) {
         this.firstNum = firstNum;
-    }
-
-    public double getSecondNum() {
-        return secondNum;
     }
 
     public void setSecondNum(double secondNum) {

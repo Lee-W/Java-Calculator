@@ -24,6 +24,8 @@ public class Cal {
     
     public static Double calculate(Deque<String> equation) {
         List<String> postfixEq = infixToPostfix(equation);
+        if (postfixEq.size() == 1)
+            return Double.parseDouble(postfixEq.get(0));
         
         String operand1, operand2, result;
         Stack<String> stack = new Stack<>();
@@ -32,22 +34,12 @@ public class Cal {
                 stack.push(s);
             } else {
                 operand2 = stack.pop();
-                if (isUnaryOperation(operand2)) {
-                    operand2 = unaryOperate(operand2).toString();
-                    System.out.print("Hi " + operand2);
-                }
-                
                 operand1 = stack.pop();
-                if (isUnaryOperation(operand1)) {
-                    operand1 = unaryOperate(operand1).toString();
-                    System.out.print("Hi " + operand1);
-                }
 
                 Operation oper;
                 oper = OperationFactory.createOperation(s);
                 oper.setFirstNum(Double.parseDouble(operand1));
                 oper.setSecondNum(Double.parseDouble(operand2));
-                System.out.println("Nani : " +operand1 + "\t"+operand2);
                 stack.push(String.valueOf(oper.getResult()));
             }
         }
@@ -114,8 +106,10 @@ public class Cal {
                     postFixResult.add(stack.pop());
                 }
                 stack.push(token);
-            } else if (isNumeric(token) || isUnaryOperation(token)) {
+            } else if (isNumeric(token)) {
                 postFixResult.add(token);
+            } else if (isUnaryOperation(token)) {
+                postFixResult.add(unaryOperate(token).toString());
             }
         }
         

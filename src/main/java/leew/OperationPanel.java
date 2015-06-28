@@ -11,8 +11,11 @@ import java.util.Deque;
  * Created by LeeW on 6/27/15.
  */
 public class OperationPanel extends JPanel implements ActionListener{
-    private Deque<String> equation = new ArrayDeque<>(); 
+    private Deque<String> equation = new ArrayDeque<>();
+    private Double memoryValue = 0.0;
     private String curToken = "";
+    
+    private boolean memoryIsOn = false;
     
     private boolean disableCalculator = false;
     private boolean dotExisted = false;
@@ -111,10 +114,19 @@ public class OperationPanel extends JPanel implements ActionListener{
 
     private void setupMemoryButtons() {
         mcButton.setText("MC");
+        mcButton.addActionListener(this);
+        
         msButton.setText("MS");
+        mcButton.addActionListener(this);
+        
         mrButton.setText("MR");
+        mrButton.addActionListener(this);
+        
         mPlusButton.setText("M+");
+        mPlusButton.addActionListener(this);
+        
         mMinusButton.setText("M-");
+        mMinusButton.addActionListener(this);
     }
 
     private void setupFunctionButtons() {
@@ -129,7 +141,6 @@ public class OperationPanel extends JPanel implements ActionListener{
         
         dotButton.setText(".");
         dotButton.addActionListener(this);
-
 
         equalButton.setText("=");
         equalButton.addActionListener(this);
@@ -312,10 +323,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                 System.out.println("Calculate Equation: "+equation);
                 String originEq = equationJoin();
                 String result = Cal.calculate(equation).toString();
-                System.out.println(result.substring(result.length()-2));
-                if (result.substring(result.length()-2).equals(".0")) {
-                    result = result.substring(0, result.length() - 2);
-                }
+                result = trimDotZero(result);
                 
                 if (result.contains("Infinity") || result.contains("NaN"))
                     disableCalculator = true;
@@ -350,10 +358,40 @@ public class OperationPanel extends JPanel implements ActionListener{
                     curToken = curToken.substring(0, curToken.length()-1);
                 }
                 break;
+            
+            // Memory Functions
+            case "MC":
+                memoryIsOn = false;
+                memoryValue = 0.0;
+                break;
+            
+            case "MS":
+                memoryIsOn = true;
+                if (curToken.length() > 0)
+                    memoryValue = Double.parseDouble(curToken);
+                break;
+            
+            case "MR":
+                memoryIsOn = true;
+                curToken = trimDotZero(String.valueOf(memoryValue));
+                break;
+            
+            case "M+":
+                memoryIsOn = true;
+                if (curToken.length() > 0)
+                    memoryValue += Double.parseDouble(curToken);
+                break;
+            case "M-":
+                memoryIsOn = true;
+                if (curToken.length() > 0)
+                    memoryValue -= Double.parseDouble(curToken);
+                break;
         }
-        System.out.println("CurToken: "+curToken);
-        System.out.println("Equation: " + equation);
-        frame.updateEquation(equationJoin() + curToken);
+        
+        if (memoryIsOn)
+            frame.updateEquation("M   "+equationJoin() + curToken);
+        else
+            frame.updateEquation(equationJoin() + curToken);
     }
     
     private void resetStatus() {
@@ -366,5 +404,11 @@ public class OperationPanel extends JPanel implements ActionListener{
         for (String token : equation)
             result += token + " ";
         return result;
+    }
+    
+    private static String trimDotZero(String num) {
+        if (num.substring(num.length()-2).equals(".0"))
+            num = num.substring(0, num.length() - 2);
+        return num;
     }
 }

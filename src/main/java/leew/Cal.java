@@ -17,8 +17,8 @@ public class Cal {
         opMap.put("*", 3);
         opMap.put("/", 3);
         opMap.put("%", 3);
-        opMap.put("+", 4);
-        opMap.put("-", 4);
+        opMap.put("+", 3);
+        opMap.put("-", 3);
         OP_PRIORITY = Collections.unmodifiableMap(opMap);
     }
     

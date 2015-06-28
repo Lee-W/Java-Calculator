@@ -4,16 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Created by LeeW on 6/27/15.
  */
 public class OperationPanel extends JPanel implements ActionListener{
-    private String equation = "";
+    private Deque<String> equation = new ArrayDeque<>(); 
     private String curToken = "";
-    private List<String> equationList = new ArrayList<>(); 
+    
+    private boolean dotExisted = false;
     
     private boolean operIsEnd = false;
     private boolean isFirstDigit = true;
@@ -177,13 +178,16 @@ public class OperationPanel extends JPanel implements ActionListener{
         String content = b.getText();
         
         if (operIsEnd) {
-            equation = " ";
+            equation.clear();
             operIsEnd = false;
         }
 
         switch (content) {
             case "0":
-                equation += content;
+                // Ensure that leading digit is not zero
+                if (curToken.length() == 0 || !isFirstDigit) {
+                    curToken += content;
+                }
                 break;
             
             case "1":
@@ -195,63 +199,146 @@ public class OperationPanel extends JPanel implements ActionListener{
             case "7":
             case "8":
             case "9":
-            case ".":
-                equation += content;
+                // Replace the leading zero to input digit
+                if (curToken.length() == 1 && curToken.charAt(0) == '0') {
+                    curToken = content;
+                } else {
+                    curToken += content;
+                }
+                isFirstDigit = false;
                 break;
             
+            case ".":
+                if (curToken.length() == 0) {
+                    // Ensure dot not leads a number
+                    curToken = "0.";
+                } else if (!dotExisted) {
+                    // Ensure only one dot exist
+                    curToken += content;
+                }
+                isFirstDigit = false;
+                dotExisted = true;
+                
+                break;
+            
+            // Binary Operation
             case "+":
             case "-":
             case "*":
             case "/":
             case "%":
-                equation += " " + content + " ";
+                if (curToken == "") {
+                    equation.removeLast();
+                    equation.add(content);
+                } else {
+                    if (curToken.charAt(curToken.length()-1) == '.')
+                        curToken += "0";
+                    equation.add(curToken);
+                    equation.add(content);
+                    curToken = "";
+                }
+                resetStatus();
                 break;
             
             case "exp":
-                equation += " ^ ";
+                if (curToken == "") {
+                    equation.removeLast();
+                    equation.add("^");
+                } else {
+                    if (curToken.charAt(curToken.length()-1) == '.')
+                        curToken += "0";
+                    equation.add(curToken);
+                    equation.add("^");
+                    curToken = "";
+                }
+                resetStatus();
                 break;
             
+            // Unary Operation
             case "√":
-            case "!":
-            case "log":
-                equation += " " + content + " ";
-                break;
-            
-            case "+/-":
-                break;
-            
-            case "=":
-                String originEq = equation;
-                equation = Cal.calculate(equation).toString();
-                frame.addHistory(originEq+" = "+ equation);
-                operIsEnd = true;
-                break;
-            
-            case "CE":
-                try {
-                    equation = equation.substring(0, equation.lastIndexOf(" ")+1);
-                } catch (Exception ee) {
-                    equation = " ";
+                if (curToken.length() > 0) {
+                    if (curToken.charAt(curToken.length()-1) == '.')
+                        curToken += "0";
+                    curToken = "sqrt("+curToken+")";
                 }
                 break;
             
-            case "C":
-                equation = " ";
+            case "!":
+                if (curToken.length() > 0 && Cal.isPositive(curToken)) {
+                    if (curToken.charAt(curToken.length()-1) == '.')
+                        curToken += "0";
+                    curToken = "factorial("+curToken+")";
+                }
                 break;
             
-            case "←":
-                int index = 0;
-                for (int i = equation.length()-1; i > -1; i--)
-                    if (equation.charAt(i) != ' ') {
-                        index = i;
-                        break;
-                    }
+            case "log":
+                if (curToken.length() > 0) {
+                    if (curToken.charAt(curToken.length()-1) == '.')
+                        curToken += "0";
+                    curToken = "log("+curToken+")";
+                }
+                break;
+            
+            // Invert
+            case "+/-":
+                if (Cal.isNumeric(curToken)) {
+                    curToken = Cal.invert(curToken);
+                }
+                break;
+            
+            // Equal
+            case "=":
+                if (curToken.length() > 0) {
+                    equation.add(curToken);
+                    curToken = "";
+                } else if (equation.size() > 0)
+                    equation.removeLast();
+
+                System.out.println("Calculate Equation: "+equation);
+                String originEq = equationJoin();
+                String result = Cal.calculate(equation).toString();
+                frame.addHistory(originEq+" = "+ result);
+                operIsEnd = true;
                 
-                equation = equation.substring(0, index);
+                equation.clear();
+                equation.add(result);
+                break;
+            
+            // Clear Entry
+            case "CE":
+                if (curToken.length() > 0) {
+                    curToken = "";
+                }
+                break;
+            
+            // Clear
+            case "C":
+                curToken = "";
+                equation.clear();
+                break;
+            
+            // BackSpace
+            case "←":
+                if (curToken.length() > 0) {
+                    curToken = curToken.substring(0, curToken.length()-1);
+                }
                 break;
         }
-        
-        System.out.println(equation);
-        frame.updateEquation(equation);
+        System.out.println("CurToken: "+curToken);
+        System.out.println("Equation: "+equation);
+        frame.updateEquation(equationJoin() + curToken);
+    }
+    
+    private void resetStatus() {
+        dotExisted = false;
+        isFirstDigit = true;
+        operIsEnd = false;
+    }
+    
+    private String equationJoin() {
+        String result = " ";
+        for (String token : equation)
+            result += token + " ";
+        return result;
     }
 }

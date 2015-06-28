@@ -3,7 +3,7 @@ package leew.Operation.UnaryOperatoin;
 /**
  * Created by LeeW on 6/27/15.
  */
-public class OperationFactorial extends UniaryOperation {
+public class OperationFactorial extends UnaryOperation {
 
     @Override
     public double getResult() {

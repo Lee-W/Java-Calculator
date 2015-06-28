@@ -307,7 +307,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                     disableCalculator = true;
                 
                 
-                frame.addHistory(originEq+" = "+ result);
+//                frame.addHistory(originEq+" = "+ result);
                 operIsEnd = true;
                 
                 equation.clear();
@@ -338,7 +338,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                 break;
         }
         System.out.println("CurToken: "+curToken);
-        System.out.println("Equation: "+equation);
+        System.out.println("Equation: " + equation);
         frame.updateEquation(equationJoin() + curToken);
     }
     

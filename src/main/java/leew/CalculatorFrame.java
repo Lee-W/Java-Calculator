@@ -15,6 +15,7 @@ public class CalculatorFrame extends JFrame {
 
     public static void main (String[] args) {
         CalculatorFrame frame = new CalculatorFrame();
+        frame.setupPanels();
         frame.setVisible(true);
     }
     
@@ -26,7 +27,7 @@ public class CalculatorFrame extends JFrame {
         resultField.setText(" ");
         resultField.setSize(100, 100);
 
-        setupPanels();
+//        setupPanels();
     }
     
     public void setupPanels() {
@@ -58,6 +59,6 @@ public class CalculatorFrame extends JFrame {
     }
     
     public void addHistory(String eq) {
-        historyPanel.addHistory(eq);
+//        historyPanel.addHistory(eq);
     }
 }

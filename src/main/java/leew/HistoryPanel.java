@@ -8,10 +8,13 @@ import java.awt.*;
  */
 public class HistoryPanel extends JPanel {
     private static final String PIC_PATH = "src/main/resources/img/sauce.jpg";
+    
     private String historyData = "";
+    private boolean historyIsEnabled = true; 
+    
     private JScrollPane jScrollPane = new JScrollPane();
     
-    private JTextArea displayArea = new JTextArea();
+    private JTextArea displayArea = new JTextArea(10, 30);
     private JLabel picLabel = new JLabel();
     
     private JButton showPictureButton = new JButton();
@@ -25,23 +28,28 @@ public class HistoryPanel extends JPanel {
     
     public void addHistory(String equation) {
         historyData += equation + "\n";
-        displayArea.setText(historyData);
+        if (historyIsEnabled) {
+            displayArea.setText(historyData);
+        }
     }
     
     private void createUIComponents() {
         showPictureButton.setText("Show Picture");
-        showPictureButton.addActionListener(actionListener-> {
+        showPictureButton.addActionListener(actionListener -> {
             jScrollPane.setViewportView(picLabel);
+            historyIsEnabled = false;
         });
 
         showHistoryButton.setText("Show History");
         showHistoryButton.addActionListener(actionListener -> {
             jScrollPane.setViewportView(displayArea);
+            historyIsEnabled = true;
         });
 
         clearHistoryButton.setText("Clear History");
         clearHistoryButton.addActionListener(actionListener -> {
             historyData = "";
+            displayArea.setText(historyData);
         });
         
         ImageIcon imageIcon =new ImageIcon(PIC_PATH);
@@ -49,9 +57,9 @@ public class HistoryPanel extends JPanel {
         picLabel.setBounds(100, 100, 100, 100);
 
         displayArea.setBounds(100, 100, 100, 100);
+        displayArea.setEnabled(false);
 
         jScrollPane.setViewportView(displayArea);
-        jScrollPane.setViewportView(picLabel);
         jScrollPane.setBounds(100, 100, 100, 100);
         
         addComponents();
@@ -86,6 +94,4 @@ public class HistoryPanel extends JPanel {
         c3.gridheight = 6;
         this.add(jScrollPane, c3);
     }
-    
-    
 }

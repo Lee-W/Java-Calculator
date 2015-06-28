@@ -7,8 +7,12 @@ GUI Calculator that supports
 * History recording  
 * Picture displaying
 
-# USAGE
 
+# Environment
+* java version "1.8.0_40"
+* Gradle 2.4
+
+# USAGE
 ### Build
 ```sh
 gradle build

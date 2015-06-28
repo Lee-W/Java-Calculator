@@ -14,6 +14,7 @@ public class OperationPanel extends JPanel implements ActionListener{
     private Deque<String> equation = new ArrayDeque<>(); 
     private String curToken = "";
     
+    private boolean disableCalculator = false;
     private boolean dotExisted = false;
     
     private boolean operIsEnd = false;
@@ -181,6 +182,9 @@ public class OperationPanel extends JPanel implements ActionListener{
             equation.clear();
             operIsEnd = false;
         }
+        
+        if (disableCalculator && content != "C")
+            return ;
 
         switch (content) {
             case "0":
@@ -297,11 +301,17 @@ public class OperationPanel extends JPanel implements ActionListener{
                 System.out.println("Calculate Equation: "+equation);
                 String originEq = equationJoin();
                 String result = Cal.calculate(equation).toString();
+                
+                if (result == "Infinity" || result == "Nan")
+                    disableCalculator = true;
+                
+                
                 frame.addHistory(originEq+" = "+ result);
                 operIsEnd = true;
                 
                 equation.clear();
                 equation.add(result);
+                resetStatus();
                 break;
             
             // Clear Entry
@@ -315,6 +325,8 @@ public class OperationPanel extends JPanel implements ActionListener{
             case "C":
                 curToken = "";
                 equation.clear();
+                disableCalculator = false;
+                resetStatus();
                 break;
             
             // BackSpace

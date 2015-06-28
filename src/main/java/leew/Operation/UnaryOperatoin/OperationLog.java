@@ -6,6 +6,6 @@ package leew.Operation.UnaryOperatoin;
 public class OperationLog extends UnaryOperation {
     @Override
     public double getResult() {
-        return Math.log(firstNum) / Math.log(10);
+        return Math.log10(firstNum);
     }
 }

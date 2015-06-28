@@ -7,7 +7,8 @@ import java.awt.*;
  * Created by LeeW on 6/27/15.
  */
 public class CalculatorFrame extends JFrame {
-    private JTextField resultField = new JTextField(30);
+    private JLabel memoryIndicator = new JLabel();
+    private JTextField resultField = new JTextField(24);
     
     private HistoryPanel historyPanel = new HistoryPanel();
     private OperationPanel operationPanel = new OperationPanel(this);
@@ -26,13 +27,23 @@ public class CalculatorFrame extends JFrame {
     }
     
     public void setupPanels() {
+        memoryIndicator.setText("M");
+        memoryIndicator.setVisible(false);
+        
+        GridBagConstraints c3 = new GridBagConstraints();
+        c3.gridx = 0;
+        c3.gridy = 0;
+        c3.gridheight = 1;
+        c3.gridwidth = 1;
+        this.add(memoryIndicator, c3);
+        
         resultField.setText(" ");
         resultField.setSize(100, 100);
         resultField.setEditable(false);
         GridBagConstraints c0 = new GridBagConstraints();
-        c0.gridx = 0;
+        c0.gridx = 1;
         c0.gridy = 0;
-        c0.gridwidth = 5;
+        c0.gridwidth = 4;
         c0.gridheight = 1;
         this.add(resultField, c0);
         
@@ -58,5 +69,9 @@ public class CalculatorFrame extends JFrame {
     
     public void addHistory(String eq) {
         historyPanel.addHistory(eq);
+    }
+    
+    public void setMemoryStatus(boolean status) {
+        memoryIndicator.setVisible(status);
     }
 }

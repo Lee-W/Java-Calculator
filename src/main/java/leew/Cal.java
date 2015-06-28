@@ -22,6 +22,7 @@ public class Cal {
         OP_PRIORITY = Collections.unmodifiableMap(opMap);
     }
     
+    
     public static Double calculate(Deque<String> equation) {
         List<String> postfixEq = infixToPostfix(equation);
         if (postfixEq.size() == 1)

@@ -117,7 +117,7 @@ public class OperationPanel extends JPanel implements ActionListener{
         mcButton.addActionListener(this);
         
         msButton.setText("MS");
-        mcButton.addActionListener(this);
+        msButton.addActionListener(this);
         
         mrButton.setText("MR");
         mrButton.addActionListener(this);
@@ -366,6 +366,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                 break;
             
             case "MS":
+                System.out.println(curToken);
                 memoryIsOn = true;
                 if (curToken.length() > 0)
                     memoryValue = Double.parseDouble(curToken);
@@ -388,10 +389,8 @@ public class OperationPanel extends JPanel implements ActionListener{
                 break;
         }
         
-        if (memoryIsOn)
-            frame.updateEquation("M   "+equationJoin() + curToken);
-        else
-            frame.updateEquation(equationJoin() + curToken);
+        frame.setMemoryStatus(memoryIsOn);
+        frame.updateEquation(equationJoin() + curToken);
     }
     
     private void resetStatus() {

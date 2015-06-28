@@ -178,22 +178,22 @@ public class OperationPanel extends JPanel implements ActionListener{
         JButton b = (JButton) e.getSource();
         String content = b.getText();
         
-        if (operIsEnd) {
-            System.out.println("qweqwe");
-            equation.clear();
-            operIsEnd = false;
-        }
         
         if (disableCalculator && content != "C")
             return ;
 
         switch (content) {
-//            case "0":
-//                // Ensure that leading digit is not zero
-//                if (curToken.length() == 0 || !isFirstDigit) {
-//                    curToken += content;
-//                }
-//                break;
+            case "0":
+                if (operIsEnd) {
+                    equation.clear();
+                    operIsEnd = false;
+                }
+                
+                // Ensure that leading digit is not zero
+                if (curToken.length() == 0 || !isFirstDigit) {
+                    curToken += content;
+                }
+                break;
             
             case "1":
             case "2":
@@ -204,6 +204,11 @@ public class OperationPanel extends JPanel implements ActionListener{
             case "7":
             case "8":
             case "9":
+                if (operIsEnd) {
+                    curToken = "";
+                    operIsEnd = false;
+                }
+                
                 // Replace the leading zero to input digit
                 if (curToken.length() == 1 && curToken.charAt(0) == '0') {
                     curToken = content;
@@ -214,6 +219,11 @@ public class OperationPanel extends JPanel implements ActionListener{
                 break;
             
             case ".":
+                if (operIsEnd) {
+                    curToken = "";
+                    operIsEnd = false;
+                }
+                
                 if (curToken.length() == 0) {
                     // Ensure dot not leads a number
                     curToken = "0.";
@@ -302,6 +312,10 @@ public class OperationPanel extends JPanel implements ActionListener{
                 System.out.println("Calculate Equation: "+equation);
                 String originEq = equationJoin();
                 String result = Cal.calculate(equation).toString();
+                System.out.println(result.substring(result.length()-2));
+                if (result.substring(result.length()-2).equals(".0")) {
+                    result = result.substring(0, result.length() - 2);
+                }
                 
                 if (result == "Infinity" || result == "Nan")
                     disableCalculator = true;
@@ -311,7 +325,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                 operIsEnd = true;
                 
                 equation.clear();
-                equation.add(result);
+                curToken = result;
                 resetStatus();
                 break;
             

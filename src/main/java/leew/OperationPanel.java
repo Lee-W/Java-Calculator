@@ -317,7 +317,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                     result = result.substring(0, result.length() - 2);
                 }
                 
-                if (result == "Infinity" || result == "Nan")
+                if (result.contains("Infinity") || result.contains("NaN"))
                     disableCalculator = true;
                 
                 

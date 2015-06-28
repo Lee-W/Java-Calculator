@@ -179,6 +179,7 @@ public class OperationPanel extends JPanel implements ActionListener{
         String content = b.getText();
         
         if (operIsEnd) {
+            System.out.println("qweqwe");
             equation.clear();
             operIsEnd = false;
         }
@@ -344,7 +345,6 @@ public class OperationPanel extends JPanel implements ActionListener{
     private void resetStatus() {
         dotExisted = false;
         isFirstDigit = true;
-        operIsEnd = false;
     }
     
     private String equationJoin() {

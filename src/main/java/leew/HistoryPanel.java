@@ -2,12 +2,13 @@ package leew;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * Created by LeeW on 6/27/15.
  */
 public class HistoryPanel extends JPanel {
-    private static final String PIC_PATH = "src/main/resources/img/sauce.jpg";
+    private static final URL PIC_PATH = ClassLoader.getSystemClassLoader().getResource("img/sauce.jpg");
     
     private String historyData = "";
     private boolean historyIsEnabled = true; 

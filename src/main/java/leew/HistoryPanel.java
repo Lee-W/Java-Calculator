@@ -42,6 +42,7 @@ public class HistoryPanel extends JPanel {
 
         showHistoryButton.setText("Show History");
         showHistoryButton.addActionListener(actionListener -> {
+            displayArea.setText(historyData);
             jScrollPane.setViewportView(displayArea);
             historyIsEnabled = true;
         });

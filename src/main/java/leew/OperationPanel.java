@@ -188,12 +188,12 @@ public class OperationPanel extends JPanel implements ActionListener{
             return ;
 
         switch (content) {
-            case "0":
-                // Ensure that leading digit is not zero
-                if (curToken.length() == 0 || !isFirstDigit) {
-                    curToken += content;
-                }
-                break;
+//            case "0":
+//                // Ensure that leading digit is not zero
+//                if (curToken.length() == 0 || !isFirstDigit) {
+//                    curToken += content;
+//                }
+//                break;
             
             case "1":
             case "2":
@@ -307,7 +307,7 @@ public class OperationPanel extends JPanel implements ActionListener{
                     disableCalculator = true;
                 
                 
-//                frame.addHistory(originEq+" = "+ result);
+                frame.addHistory(originEq+" = "+ result);
                 operIsEnd = true;
                 
                 equation.clear();

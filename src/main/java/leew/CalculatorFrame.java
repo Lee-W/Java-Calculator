@@ -7,7 +7,7 @@ import java.awt.*;
  * Created by LeeW on 6/27/15.
  */
 public class CalculatorFrame extends JFrame {
-    private JLabel resultField = new JLabel();
+    private JTextField resultField = new JTextField(30);
     
     private HistoryPanel historyPanel = new HistoryPanel();
     private OperationPanel operationPanel = new OperationPanel(this);
@@ -23,14 +23,12 @@ public class CalculatorFrame extends JFrame {
         setTitle("Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
-        
-        resultField.setText(" ");
-        resultField.setSize(100, 100);
-
-//        setupPanels();
     }
     
     public void setupPanels() {
+        resultField.setText(" ");
+        resultField.setSize(100, 100);
+        resultField.setEditable(false);
         GridBagConstraints c0 = new GridBagConstraints();
         c0.gridx = 0;
         c0.gridy = 0;
@@ -59,6 +57,6 @@ public class CalculatorFrame extends JFrame {
     }
     
     public void addHistory(String eq) {
-//        historyPanel.addHistory(eq);
+        historyPanel.addHistory(eq);
     }
 }

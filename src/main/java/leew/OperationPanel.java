@@ -10,28 +10,21 @@ import java.util.Deque;
 /**
  * Created by LeeW on 6/27/15.
  */
-public class OperationPanel extends JPanel implements ActionListener{
+public class OperationPanel extends JPanel implements ActionListener {
     private Deque<String> equation = new ArrayDeque<>();
     private Double memoryValue = 0.0;
     private String curToken = "";
-    
+
     private boolean memoryIsOn = false;
-    
     private boolean disableCalculator = false;
     private boolean dotExisted = false;
-    
     private boolean operIsEnd = false;
     private boolean isFirstDigit = true;
-    
+
     private CalculatorFrame frame;
-    
-    private JButton clearButton = new JButton();
-    private JButton backspaceButton = new JButton();
-    private JButton equalButton = new JButton();
-    private JButton dotButton = new JButton();
-    private JButton ceButton = new JButton();
-    
+
     private JButton[] numButtons = new JButton[10];
+    private JButton dotButton = new JButton();
 
     // Memory Operation
     private JButton mcButton = new JButton();
@@ -53,11 +46,17 @@ public class OperationPanel extends JPanel implements ActionListener{
     private JButton logButton = new JButton();
     private JButton factorialButton = new JButton();
     private JButton invertSignButton = new JButton();
+
+    private JButton equalButton = new JButton();
+    private JButton ceButton = new JButton();
+    private JButton clearButton = new JButton();
+    private JButton backspaceButton = new JButton();
     
     public OperationPanel(CalculatorFrame f) {
         frame = f;
-        this.setLayout(new GridLayout(6, 5));
+        setLayout(new GridLayout(6, 5));
         createUIComponents();
+        addComponents();
     }
     
     private void createUIComponents() {
@@ -66,8 +65,6 @@ public class OperationPanel extends JPanel implements ActionListener{
         setupUnaryOpButtons();
         setupMemoryButtons();
         setupFunctionButtons();
-
-        addComponents();
     }
 
     private void setupNumButtons() {
@@ -81,19 +78,19 @@ public class OperationPanel extends JPanel implements ActionListener{
     private void setupBinaryOpButtons() {
         plusButton.setText("+");
         plusButton.addActionListener(this);
-        
+
         minusButton.setText("-");
         minusButton.addActionListener(this);
-        
+
         divideButton.setText("/");
         divideButton.addActionListener(this);
-        
+
         multiplyButton.setText("*");
         multiplyButton.addActionListener(this);
-        
+
         modButton.setText("%");
         modButton.addActionListener(this);
-        
+
         expButton.setText("exp");
         expButton.addActionListener(this);
     }
@@ -101,13 +98,13 @@ public class OperationPanel extends JPanel implements ActionListener{
     private void setupUnaryOpButtons() {
         sqrtButton.setText("√");
         sqrtButton.addActionListener(this);
-        
+
         logButton.setText("log");
         logButton.addActionListener(this);
-        
+
         factorialButton.setText("!");
         factorialButton.addActionListener(this);
-        
+
         invertSignButton.setText("+/-");
         invertSignButton.addActionListener(this);
     }
@@ -115,16 +112,16 @@ public class OperationPanel extends JPanel implements ActionListener{
     private void setupMemoryButtons() {
         mcButton.setText("MC");
         mcButton.addActionListener(this);
-        
+
         msButton.setText("MS");
         msButton.addActionListener(this);
-        
+
         mrButton.setText("MR");
         mrButton.addActionListener(this);
-        
+
         mPlusButton.setText("M+");
         mPlusButton.addActionListener(this);
-        
+
         mMinusButton.setText("M-");
         mMinusButton.addActionListener(this);
     }
@@ -132,13 +129,13 @@ public class OperationPanel extends JPanel implements ActionListener{
     private void setupFunctionButtons() {
         ceButton.setText("CE");
         ceButton.addActionListener(this);
-        
+
         clearButton.setText("C");
         clearButton.addActionListener(this);
-        
+
         backspaceButton.setText("←");
         backspaceButton.addActionListener(this);
-        
+
         dotButton.setText(".");
         dotButton.addActionListener(this);
 
@@ -188,24 +185,17 @@ public class OperationPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton) e.getSource();
         String content = b.getText();
-        
-        
+
         if (disableCalculator && content != "C")
-            return ;
+            return;
 
         switch (content) {
             case "0":
-                if (operIsEnd) {
-                    equation.clear();
-                    operIsEnd = false;
-                }
-                
+                clearLastResult();
                 // Ensure that leading digit is not zero
-                if (curToken.length() == 0 || !isFirstDigit) {
+                if (curToken.length() == 0 || !isFirstDigit)
                     curToken += content;
-                }
                 break;
-            
             case "1":
             case "2":
             case "3":
@@ -215,26 +205,18 @@ public class OperationPanel extends JPanel implements ActionListener{
             case "7":
             case "8":
             case "9":
-                if (operIsEnd) {
-                    curToken = "";
-                    operIsEnd = false;
-                }
+                clearLastResult();
                 
                 // Replace the leading zero to input digit
-                if (curToken.length() == 1 && curToken.charAt(0) == '0') {
+                if (curToken.length() == 1 && curToken.charAt(0) == '0')
                     curToken = content;
-                } else {
+                else
                     curToken += content;
-                }
                 isFirstDigit = false;
                 break;
-            
             case ".":
-                if (operIsEnd) {
-                    curToken = "";
-                    operIsEnd = false;
-                }
-                
+                clearLastResult();
+
                 if (curToken.length() == 0) {
                     // Ensure dot not leads a number
                     curToken = "0.";
@@ -244,106 +226,67 @@ public class OperationPanel extends JPanel implements ActionListener{
                 }
                 isFirstDigit = false;
                 dotExisted = true;
-                
+
                 break;
-            
+
             // Binary Operation
             case "+":
             case "-":
             case "*":
             case "/":
             case "%":
-                if (curToken == "") {
-                    equation.removeLast();
-                    equation.add(content);
-                } else {
-                    if (curToken.charAt(curToken.length()-1) == '.')
-                        curToken += "0";
-                    equation.add(curToken);
-                    equation.add(content);
-                    curToken = "";
-                }
-                resetStatus();
+                handleBinaryOp(content);
                 break;
-            
             case "exp":
-                if (curToken == "") {
-                    equation.removeLast();
-                    equation.add("^");
-                } else {
-                    if (curToken.charAt(curToken.length()-1) == '.')
-                        curToken += "0";
-                    equation.add(curToken);
-                    equation.add("^");
-                    curToken = "";
-                }
-                resetStatus();
+                handleBinaryOp("^");
                 break;
-            
+
             // Unary Operation
-            case "√":
-                if (curToken.length() > 0) {
-                    if (curToken.charAt(curToken.length()-1) == '.')
-                        curToken += "0";
-                    curToken = "sqrt("+curToken+")";
-                }
-                break;
-            
-            case "!":
-                if (curToken.length() > 0 && Cal.isPositive(curToken)) {
-                    if (curToken.charAt(curToken.length()-1) == '.')
-                        curToken += "0";
-                    curToken = "factorial("+curToken+")";
-                }
-                break;
-            
             case "log":
-                if (curToken.length() > 0) {
-                    if (curToken.charAt(curToken.length()-1) == '.')
-                        curToken += "0";
-                    curToken = "log("+curToken+")";
-                }
+            case "√":
+                handleUnaryOp(content);
                 break;
-            
+            case "!":
+                if (Cal.isPositive(curToken))
+                    handleUnaryOp(content);
+                break;
+
             // Invert
             case "+/-":
-                if (Cal.isNumeric(curToken)) {
+                if (Cal.isNumeric(curToken))
                     curToken = Cal.invert(curToken);
-                }
                 break;
-            
+
             // Equal
             case "=":
                 if (curToken.length() > 0) {
+                    appendZeroToLastDot();
                     equation.add(curToken);
                     curToken = "";
                 } else if (equation.size() > 0)
                     equation.removeLast();
 
-                System.out.println("Calculate Equation: "+equation);
-                String originEq = equationJoin();
+                String originEq = joinEquation();
                 String result = Cal.calculate(equation).toString();
                 result = trimDotZero(result);
-                
-                if (result.contains("Infinity") || result.contains("NaN"))
+
+                if (notANumber(result))
                     disableCalculator = true;
-                
-                
-                frame.addHistory(originEq+" = "+ result);
+
+                frame.addHistory(originEq + " = " + result);
                 operIsEnd = true;
-                
+
                 equation.clear();
-                curToken = result;
                 resetStatus();
+                curToken = result;
                 break;
-            
+
             // Clear Entry
             case "CE":
-                if (curToken.length() > 0) {
+                if (curToken.length() > 0)
                     curToken = "";
-                }
                 break;
-            
+
             // Clear
             case "C":
                 curToken = "";
@@ -351,32 +294,30 @@ public class OperationPanel extends JPanel implements ActionListener{
                 disableCalculator = false;
                 resetStatus();
                 break;
-            
+
             // BackSpace
             case "←":
-                if (curToken.length() > 0) {
-                    curToken = curToken.substring(0, curToken.length()-1);
-                }
+                if (curToken.length() > 0)
+                    curToken = curToken.substring(0, curToken.length() - 1);
                 break;
-            
+
             // Memory Functions
             case "MC":
                 memoryIsOn = false;
                 memoryValue = 0.0;
                 break;
-            
+
             case "MS":
-                System.out.println(curToken);
                 memoryIsOn = true;
                 if (curToken.length() > 0)
                     memoryValue = Double.parseDouble(curToken);
                 break;
-            
+
             case "MR":
-                memoryIsOn = true;
-                curToken = trimDotZero(String.valueOf(memoryValue));
+                if (memoryIsOn)
+                    curToken = trimDotZero(String.valueOf(memoryValue));
                 break;
-            
+
             case "M+":
                 memoryIsOn = true;
                 if (curToken.length() > 0)
@@ -388,26 +329,61 @@ public class OperationPanel extends JPanel implements ActionListener{
                     memoryValue -= Double.parseDouble(curToken);
                 break;
         }
-        
+
         frame.setMemoryStatus(memoryIsOn);
-        frame.updateEquation(equationJoin() + curToken);
+        frame.updateEquation(joinEquation() + curToken);
+    }
+    
+    private void clearLastResult() {
+        if (operIsEnd) {
+            curToken = "";
+            operIsEnd = false;
+        }
+    }
+    
+    private void handleBinaryOp(String op) {
+        if (curToken.length() > 0) {
+            appendZeroToLastDot();
+            equation.add(curToken);
+            curToken = "";
+        } else {
+            equation.removeLast();
+        }
+        equation.add(op);
+        resetStatus();   
+    }
+    
+    private void handleUnaryOp(String op) {
+        if (curToken.length() > 0 && Cal.isPositive(curToken)) {
+            appendZeroToLastDot();
+            curToken = op + "(" + curToken + ")";
+        }
+    }
+    
+    private void appendZeroToLastDot() {
+        if (curToken.charAt(curToken.length() - 1) == '.')
+            curToken += "0";
     }
     
     private void resetStatus() {
         dotExisted = false;
         isFirstDigit = true;
     }
-    
-    private String equationJoin() {
+
+    private String joinEquation() {
         String result = " ";
         for (String token : equation)
             result += token + " ";
         return result;
     }
-    
+
     private static String trimDotZero(String num) {
-        if (num.substring(num.length()-2).equals(".0"))
+        if (num.substring(num.length() - 2).equals(".0"))
             num = num.substring(0, num.length() - 2);
         return num;
+    }
+    
+    private static boolean notANumber(String num) {
+        return num.contains("Infinity") || num.contains("NaN");
     }
 }

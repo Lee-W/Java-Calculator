@@ -77,25 +77,13 @@ public class Cal {
     }
 
     private static boolean isUnaryOperation(String operand) {
-        if (operand.contains("factorial") || operand.contains("log") || operand.contains("sqrt"))
+        if (operand.contains("!") || operand.contains("log") || operand.contains("√"))
             return true;
         return false;
     }
     
     private static Double operateUnaryOp(String operand) {
-        String operator = "";
-        String prefix = operand.substring(0, operand.indexOf("("));
-        switch (prefix) {
-            case "factorial":
-                operator = "!";
-                break;
-            case "log":
-                operator = "log";
-                break;
-            case "sqrt":
-                operator = "√";
-                break;
-        }
+        String operator = operand.substring(0, operand.indexOf("("));
 
         operand = operand.substring(operand.indexOf('(') + 1, operand.lastIndexOf(')'));
         if (isUnaryOperation(operand)) {

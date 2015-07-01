@@ -254,7 +254,7 @@ public class OperationPanel extends JPanel implements ActionListener {
             // Invert
             case "+/-":
                 if (Cal.isNumeric(curToken))
-                    curToken = Cal.invert(curToken);
+                    curToken = trimDotZero(Cal.invert(curToken));
                 break;
 
             // Equal
